@@ -1,0 +1,14 @@
+build-essential
+git
+bc
+bison
+flex
+libssl-dev
+u-boot-tools
+qemu-user-static
+python3
+python3-pip
+pandoc
+cpio
+wget
+
