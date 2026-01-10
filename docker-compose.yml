@@ -8,4 +8,6 @@ services:
       - ./:/workspace
       - ./artifacts:/artifacts
     tty: true
+    cpus: '2'
+    cpu_shares: 256
 

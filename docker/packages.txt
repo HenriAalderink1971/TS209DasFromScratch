@@ -11,4 +11,9 @@ python3-pip
 pandoc
 cpio
 wget
+libncurses5-dev
+libncursesw5-dev
+file
+unzip
+rsync
 
