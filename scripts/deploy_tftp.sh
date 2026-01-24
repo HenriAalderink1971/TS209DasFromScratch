@@ -8,7 +8,6 @@ GROUP="tftp"
 FILES="
 uImage
 uInitrd
-orion5x-qnap-ts209pro2.dtb
 "
 
 echo "Deploying boot artifacts to ${TFTP_DIR}"

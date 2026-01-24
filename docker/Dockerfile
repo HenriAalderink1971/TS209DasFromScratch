@@ -1,4 +1,4 @@
-FROM debian:stable
+FROM debian:bullseye
 
 COPY packages.txt /tmp/packages.txt
 
