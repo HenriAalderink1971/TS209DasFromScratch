@@ -37,4 +37,5 @@ for f in $FILES; do
 done
 
 echo "Deployment complete."
-
+echo "TS-209 Pro II u-boot console commands"
+echo "tftpboot 0x800000 uImage\ntftpboot 0x1100000 uInitrd\nbootm 0x800000 0x1100000"

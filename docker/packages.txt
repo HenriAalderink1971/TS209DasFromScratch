@@ -40,3 +40,5 @@ vim
 gcc-9
 g++-9
 
+busybox
+libc6-dev
