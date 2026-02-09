@@ -8,3 +8,7 @@ RUN apt-get update && \
 
 WORKDIR /workspace
 
+ENV PATH="/workspace/toolchain/bin:${PATH}"
+
+CMD ["sleep", "infinity"]
+
