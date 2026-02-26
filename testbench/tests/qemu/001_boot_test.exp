@@ -1,0 +1,48 @@
+#!/usr/bin/expect -f
+
+set timeout 30
+
+puts "
+
+\[TEST\]
+
+ QEMU boot test starting"
+
+spawn ./qemu/run-qemu.sh
+
+expect {
+    "Booting Linux" {
+        puts "
+
+\[INFO\]
+
+ Kernel boot detected"
+    }
+    timeout {
+        puts "
+
+\[FAIL\]
+
+ Kernel did not start booting"
+        exit 1
+    }
+}
+
+expect {
+    "BusyBox" {
+        puts "
+
+\[PASS\]
+
+ BusyBox shell reached"
+        exit 0
+    }
+    timeout {
+        puts "
+
+\[FAIL\]
+
+ BusyBox shell not reached"
+        exit 1
+    }
+}

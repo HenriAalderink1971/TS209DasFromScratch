@@ -64,7 +64,10 @@ git submodule add https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux
 
 Clone the repository and initialize the submodules:
 
-```sh
+```
+sh
+```
+
 git submodule update --init --recursive
 
 # QNAP TS-209 Pro II Bring-up Notes
@@ -162,9 +165,9 @@ After building the kernel, device tree, and initrd inside the Docker container, 
 
 To boot the TS-209 Pro II over the network, these files must be copied to the host’s TFTP directory:
 
-```
-/srv/tftp
-```
+
+`/srv/tftp`
+
 
 A helper script (`scripts/deploy_tftp.sh`) automates this process.
 
@@ -403,6 +406,22 @@ Ensure the top-level `all` target depends on `kernel`.
 - Appended-DTB kernel boots past decompression.
 - Machine ID mismatch is resolved.
 - System is ready for early kernel bring-up and DTS expansion.
+
+
+
+
+
+# Workspace commands
+
+# Testbench commands
+
+launch qemu + gdb to debug kernel:
+```
+QEMU_GDB=1 qemu/run-qemu.sh < /dev/null &
+ /workspace/toolchain/bin/arm-linux-musleabihf-gdb /workspace/sources/linux-5.10.228/vmlinux
+```
+
+
 
 
 
