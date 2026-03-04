@@ -1,7 +1,0 @@
-services:
-  buildenv:
-    build: ./docker
-    volumes:
-      - ./workspace:/workspace
-    working_dir: /workspace
-

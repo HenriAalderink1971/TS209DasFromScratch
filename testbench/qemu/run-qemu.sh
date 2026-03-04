@@ -2,7 +2,7 @@
 #set -e
 
 QEMU_KERNEL="/workspace/artifacts/qemu/zImage"
-QEMU_DTB="/workspace/artifacts/qemu/qemu_ts209.dtb"
+QEMU_DTB="/workspace/artifacts/qemu/versatile-pb.dtb"
 INITRD="/workspace/artifacts/initramfs.cpio.gz"
 
 echo "[QEMU] Using kernel: $QEMU_KERNEL"

@@ -6,17 +6,17 @@ KERNEL_VERSION := 5.10.228
 KERNEL_TARBALL := linux-$(KERNEL_VERSION).tar.xz
 KERNEL_URL	 := https://cdn.kernel.org/pub/linux/kernel/v5.x/$(KERNEL_TARBALL)
 
-KERNEL_SRC		  := $(SOURCES)/linux-$(KERNEL_VERSION)
-KERNEL_BUILD		:= $(BUILD)/kernel
-KERNEL_DEFCONFIG	:= $(ROOT)/config/ts209pII_defconfig
-QEMU_DEFCONFIG	  := $(ROOT)/config/qemu_versatile_defconfig
+KERNEL_SRC	 := $(SOURCES)/linux-$(KERNEL_VERSION)
+KERNEL_BUILD	 := $(BUILD)/kernel
+KERNEL_DEFCONFIG := $(ROOT)/config/ts209pII_defconfig
 
 TS209_ARTIFACTS	 := $(ARTIFACTS)/ts209
-TS209_KMODULES	  := $(TS209_ARTIFACTS)/kmodules
-QEMU_ARTIFACTS	  := $(ARTIFACTS)/qemu
+TS209_KMODULES	 := $(TS209_ARTIFACTS)/kmodules
 
-QEMU_DTS			:= $(ROOT)/config/qemu_ts209.dts
-QEMU_DTB			:= $(QEMU_ARTIFACTS)/qemu_ts209.dtb
+QEMU_DEFCONFIG	 := $(ROOT)/config/qemu_versatile_defconfig
+QEMU_ARTIFACTS	 := $(ARTIFACTS)/qemu
+QEMU_DTS 	 := $(ROOT)/config/qemu_ts209.dts
+QEMU_DTB	 := $(QEMU_ARTIFACTS)/qemu_ts209.dtb
 
 KERNEL_HEADERS_INSTALL := $(SYSROOT)/kernel-headers
 KERNEL_HEADERS_STAMP   := $(KERNEL_HEADERS_INSTALL)/.installed
@@ -77,7 +77,6 @@ $(TS209_ARTIFACTS)/uImage: \
 	cd $(KERNEL_SRC) && \
 		$(MAKE) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) ts209pII_defconfig && \
 		$(MAKE) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) LOADADDR=0x00008000 -j$$(nproc) uImage
-
 	cp $(KERNEL_SRC)/arch/arm/boot/uImage $(TS209_ARTIFACTS)/uImage
 
 # ============================================================
@@ -90,6 +89,7 @@ $(QEMU_ARTIFACTS):
 # Build DTB from DTS
 $(QEMU_DTB): $(QEMU_DTS) | $(QEMU_ARTIFACTS)
 	dtc -I dts -O dtb -i $(KERNEL_SRC)/include $(QEMU_DTS) -o $(QEMU_DTB)
+	cp $(KERNEL_SRC)/arch/arm/boot/dts/versatile-pb.dtb $(QEMU_ARTIFACTS)
 
 .PHONY: kernel-qemu
 kernel-qemu: kernel-qemu-build
