@@ -22,6 +22,17 @@ if [ -n "$QEMU_GDB" ]; then
 
 fi
 
+UART_PREFIX="/testbench/uart"
+rm -f "${UART_PREFIX}" "${UART_PREFIX}.in" "${UART_PREFIX}.out"
+UART_FILE="${UART_PREFIX}.log"
+if [ -n "$QEMU_SHELL" ]; then
+    QEMU_UART="-chardev stdio,mux=on,id=uart0 \
+               -mon chardev=uart0,mode=readline \
+               -serial chardev:uart0"
+else
+    QEMU_UART="-serial chardev:uart0 -chardev file,id=uart0,path=$UART_FILE"
+fi
+
 exec qemu-system-arm \
     -M versatilepb \
     -cpu arm926 \
@@ -29,8 +40,7 @@ exec qemu-system-arm \
     -dtb $QEMU_DTB \
     -initrd "$INITRD" \
     -nographic \
-    -serial chardev:uart0 \
-    -chardev file,id=uart0,path=/tmp/uart.log \
+    $QEMU_UART \
     -audio none \
     -semihosting-config enable=on,target=native \
     $QEMU_DEBUG \

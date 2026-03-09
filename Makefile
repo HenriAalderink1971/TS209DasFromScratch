@@ -130,7 +130,7 @@ testbench-shell:
 # Testbench container
 # ============================================================
 .PHONY: test
-test: build-initramfs build-kernel build-kernel-qemu-build
+test: build-initramfs build-kernel build-kernel-qemu build-initramfs build-initrd
 	@echo "[test] running tests in testbench container"
 	docker run --rm \
 		-v "$(PWD)/workspace":/workspace:ro \

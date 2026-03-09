@@ -27,6 +27,10 @@ $(INITRAMFS_CPIO): $(SYSROOT)/bin/busybox | $(ARTIFACTS)
 
 	# Copy BusyBox
 	cp $(SYSROOT)/bin/busybox $(INITRAMFS_BUILD)/bin/
+	for applet in sh mount echo; do
+		ln -sf busybox "${INITRAMFS_BUILD}/bin/${applet}"
+	done
+
 
 	# Create symlinks for BusyBox applets
 	cd $(INITRAMFS_BUILD)/bin && \

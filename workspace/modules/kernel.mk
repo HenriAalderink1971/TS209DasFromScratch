@@ -15,8 +15,6 @@ TS209_KMODULES	 := $(TS209_ARTIFACTS)/kmodules
 
 QEMU_DEFCONFIG	 := $(ROOT)/config/qemu_versatile_defconfig
 QEMU_ARTIFACTS	 := $(ARTIFACTS)/qemu
-QEMU_DTS 	 := $(ROOT)/config/qemu_ts209.dts
-QEMU_DTB	 := $(QEMU_ARTIFACTS)/qemu_ts209.dtb
 
 KERNEL_HEADERS_INSTALL := $(SYSROOT)/kernel-headers
 KERNEL_HEADERS_STAMP   := $(KERNEL_HEADERS_INSTALL)/.installed
@@ -86,15 +84,11 @@ $(TS209_ARTIFACTS)/uImage: \
 $(QEMU_ARTIFACTS):
 	mkdir -p $@
 
-# Build DTB from DTS
-$(QEMU_DTB): $(QEMU_DTS) | $(QEMU_ARTIFACTS)
-	dtc -I dts -O dtb -i $(KERNEL_SRC)/include $(QEMU_DTS) -o $(QEMU_DTB)
-	cp $(KERNEL_SRC)/arch/arm/boot/dts/versatile-pb.dtb $(QEMU_ARTIFACTS)
 
 .PHONY: kernel-qemu
 kernel-qemu: kernel-qemu-build
 
-kernel-qemu-build: $(QEMU_ARTIFACTS)/zImage $(QEMU_DTB)
+kernel-qemu-build: $(QEMU_ARTIFACTS)/zImage
 
 # Verify that .config matches qemu_versatile_defconfig
 qemu-config-check:
@@ -113,9 +107,12 @@ $(QEMU_ARTIFACTS)/zImage: $(KERNEL_SRC) $(QEMU_DEFCONFIG) | $(QEMU_ARTIFACTS)
 		$(MAKE) mrproper && \
 		cp $(QEMU_DEFCONFIG) .config && \
 		$(MAKE) ARCH=arm olddefconfig && \
-		$(MAKE) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) LOADADDR=0x00010000 -j$$(nproc) zImage
+		$(MAKE) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) LOADADDR=0x00010000 -j$$(nproc) zImage dtbs
 
+	# Copy QEMU kernel + DTB into artifacts
 	cp $(KERNEL_SRC)/arch/arm/boot/zImage $(QEMU_ARTIFACTS)/zImage
+	cp $(KERNEL_SRC)/arch/arm/boot/dts/versatile-pb.dtb $(QEMU_ARTIFACTS)/
+
 
 # ============================================================
 # clean / proper
