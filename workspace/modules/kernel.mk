@@ -44,13 +44,16 @@ $(KERNEL_SRC): $(DOWNLOADS)/$(KERNEL_TARBALL) | $(SOURCES)
 .PHONY: kernel-headers
 kernel-headers: $(KERNEL_HEADERS_STAMP)
 
-$(KERNEL_HEADERS_STAMP): $(DOWNLOADS)/$(KERNEL_TARBALL) $(KERNEL_SRC) | $(SYSROOT)
+$(KERNEL_HEADERS_STAMP): $(DOWNLOADS)/$(KERNEL_TARBALL) $(KERNEL_SRC)  $(SYSROOT)
 	cd $(KERNEL_SRC) && \
 		mkdir -p $(KERNEL_HEADERS_INSTALL) && \
 		$(MAKE) mrproper && \
 		cp $(KERNEL_DEFCONFIG) .config && \
 		$(MAKE) ARCH=arm olddefconfig && \
 		$(MAKE) ARCH=arm headers_install INSTALL_HDR_PATH=$(KERNEL_HEADERS_INSTALL)
+	rm -rf /workspace/sysroot/usr/include/linux
+	mkdir -p /workspace/sysroot/usr/include/linux
+	cp -r /workspace/sysroot/kernel-headers/include/* /workspace/sysroot/usr/include/
 	touch $(KERNEL_HEADERS_STAMP)
 
 # ============================================================
@@ -74,6 +77,7 @@ $(TS209_ARTIFACTS)/uImage: \
 
 	cd $(KERNEL_SRC) && \
 		$(MAKE) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) ts209pII_defconfig && \
+		$(MAKE) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) prepare && \
 		$(MAKE) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) LOADADDR=0x00008000 -j$$(nproc) uImage
 	cp $(KERNEL_SRC)/arch/arm/boot/uImage $(TS209_ARTIFACTS)/uImage
 
@@ -102,11 +106,12 @@ qemu-config-check:
 	  (echo "ERROR: CONFIG_VMSPLIT_3G not set")
 	@echo "[kernel-qemu] Config OK"
 
-$(QEMU_ARTIFACTS)/zImage: $(KERNEL_SRC) $(QEMU_DEFCONFIG) | $(QEMU_ARTIFACTS)
+$(QEMU_ARTIFACTS)/zImage: $(KERNEL_SRC) $(QEMU_DEFCONFIG)  $(QEMU_ARTIFACTS) $(KERNEL_HEADERS_STAMP)
 	cd $(KERNEL_SRC) && \
 		$(MAKE) mrproper && \
 		cp $(QEMU_DEFCONFIG) .config && \
 		$(MAKE) ARCH=arm olddefconfig && \
+		$(MAKE) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) prepare && \
 		$(MAKE) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) LOADADDR=0x00010000 -j$$(nproc) zImage dtbs
 
 	# Copy QEMU kernel + DTB into artifacts

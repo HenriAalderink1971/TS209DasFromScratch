@@ -1,7 +1,7 @@
 # ============================================================
 # Common workspace paths (shared by all modules)
 # ============================================================
-SHELL = /bin/bash -x
+#SHELL=/bin/bash -x
 
 ROOT	  ?= /workspace
 SOURCES   ?= $(ROOT)/sources

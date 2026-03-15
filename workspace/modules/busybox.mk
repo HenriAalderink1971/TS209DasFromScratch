@@ -76,7 +76,7 @@ $(BUSYBOX_SRC)/.config: $(BUSYBOX_SRC) $(BUSYBOX_CONFIG)
 
 .PHONY: busybox-build
 busybox-build: $(BUSYBOX_SRC)/.config $(SYSROOT)/usr/lib/libc.a $(KERNEL_HEADERS_STAMP)
-	PATH=$(TOOLCHAIN)/bin:$$PATH && $(MAKE) -C $(BUSYBOX_SRC) ARCH=arm -j$$(nproc) CROSS_COMPILE=$(TOOLCHAIN)/bin/$(TARGET)- CFLAGS_EXTRA="--sysroot=$(SYSROOT) -I$(SYSROOT)/kernel-headers/include" busybox
+	 PATH=$(TOOLCHAIN)/bin:$$PATH && $(MAKE) -C $(BUSYBOX_SRC) KERNEL_HEADERS=$(SYSROOT)/kernel-headers/include  ARCH=arm -j$$(nproc) CROSS_COMPILE=$(TOOLCHAIN)/bin/$(TARGET)- CFLAGS_EXTRA="--sysroot=$(SYSROOT) -I$(SYSROOT)/kernel-headers/include" busybox
 
 busybox-install: busybox-build
 	$(MAKE) -C $(BUSYBOX_SRC) ARCH=arm CONFIG_PREFIX=$(SYSROOT) install
