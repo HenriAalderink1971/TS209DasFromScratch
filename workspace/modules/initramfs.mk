@@ -24,10 +24,7 @@ $(INITRAMFS_CPIO): $(SYSROOT)/bin/busybox | $(ARTIFACTS)
 		$(INITRAMFS_BUILD)/usr/sbin \
 		$(INITRAMFS_BUILD)/dev \
 		$(INITRAMFS_BUILD)/tmp
-	cp $(SYSROOT)/bin/busybox $(INITRAMFS_BUILD)/bin/
-	for applet in sh mount echo clear ls; do \
-		ln -sf busybox "$(INITRAMFS_BUILD)/bin/$$applet"; \
-	done
+	cp -a $(SYSROOT)/bin $(INITRAMFS_BUILD)/
 
 	# Minimal init script
 	echo '#!/bin/sh' > $(INITRAMFS_BUILD)/init
