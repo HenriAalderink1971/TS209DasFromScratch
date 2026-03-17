@@ -1,0 +1,8 @@
+--- a/coreutils/split.c
++++ b/coreutils/split.c
+@@ -10,6 +10,7 @@
+  */
+
+ #include "libbb.h"
++#include <limits.h> /* for NAME_MAX */
+

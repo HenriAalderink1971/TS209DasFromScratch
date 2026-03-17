@@ -1,0 +1,12 @@
+[submodule "linux"]
+	path = linux
+	url = https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+[submodule "buildroot"]
+	path = buildroot
+	url = https://github.com/buildroot/buildroot.git
+[submodule "external/binutils"]
+	path = external/binutils
+	url = https://sourceware.org/git/binutils-gdb.git
+[submodule "external/gcc"]
+	path = external/gcc
+	url = https://gcc.gnu.org/git/gcc.git

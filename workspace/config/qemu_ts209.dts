@@ -1,0 +1,145 @@
+/dts-v1/;
+
+/ {
+    model = "QEMU VersatilePB (TS-209 inspired)";
+    compatible = "arm,versatile-pb", "qemu,versatilepb", "qnap,ts209", "marvell,orion5x";
+
+    interrupt-parent = <&intc>;
+
+
+    #address-cells = <1>;
+    #size-cells = <1>;
+
+    memory@0 {
+        device_type = "memory";
+        reg = <0x00000000 0x08000000>; /* 128 MB */
+    };
+
+    cpus {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        cpu@0 {
+            device_type = "cpu";
+            compatible = "arm,arm926ej-s";
+            reg = <0>;
+        };
+    };
+
+    /* ---------------------------------------------------------
+     * QEMU REAL HARDWARE NODES
+     * --------------------------------------------------------- */
+
+    soc {
+        compatible = "simple-bus";
+        #address-cells = <1>;
+        #size-cells = <1>;
+        ranges;
+
+        /* PL011 UART0 (QEMU console) */
+        uart0: serial@101f1000 {
+            compatible = "arm,pl011", "arm,primecell";
+            reg = <0x101f1000 0x1000>;
+            interrupts = <12>;
+            clock-frequency = <24000000>;
+        };
+
+        /* VIC interrupt controller */
+        intc: interrupt-controller@10140000 {
+            compatible = "arm,pl190-vic";
+            reg = <0x10140000 0x1000>;
+            interrupt-controller;
+            #interrupt-cells = <1>;
+        };
+
+        /* SMC91C111 Ethernet (QEMU NIC) */
+        ethernet@10010000 {
+            compatible = "smsc,lan91c111";
+            reg = <0x10010000 0x1000>;
+            interrupts = <25>;
+        };
+    };
+
+    /* ---------------------------------------------------------
+     * TS-209 INSPIRED NODES (FAKE BUT USEFUL FOR INITRAMFS)
+     * --------------------------------------------------------- */
+
+    /* Fake GPIO controller to mimic TS-209 layout */
+    gpio0: gpio@f1010100 {
+        compatible = "qnap,ts209-gpio", "gpio-sim";
+        reg = <0xf1010100 0x100>;
+        ngpios = <32>;
+
+        gpio-controller;
+        #gpio-cells = <2>;
+    };
+
+    /* LEDs similar to TS-209 front panel */
+    leds {
+        compatible = "gpio-leds";
+
+        status_green {
+            label = "ts209:green:status";
+            gpios = <&gpio0 0 0>;
+        };
+
+        status_red {
+            label = "ts209:red:status";
+            gpios = <&gpio0 1 0>;
+        };
+
+        hdd1_led {
+            label = "ts209:green:hdd1";
+            gpios = <&gpio0 2 0>;
+        };
+
+        hdd2_led {
+            label = "ts209:green:hdd2";
+            gpios = <&gpio0 3 0>;
+        };
+    };
+
+    /* Buttons similar to TS-209 */
+    buttons {
+        compatible = "gpio-keys";
+
+        power {
+            label = "Power Button";
+            linux,code = <116>; /* KEY_POWER */
+            gpios = <&gpio0 10 1>;
+        };
+
+        reset {
+            label = "Reset Button";
+            linux,code = <0x198>; /* KEY_RESTART */
+            gpios = <&gpio0 11 1>;
+        };
+    };
+
+    /* Fake flash layout for initramfs scripts */
+    flash@0 {
+        compatible = "qnap,ts209-flash", "mtd-rom";
+        reg = <0x00000000 0x00800000>; /* 8 MB fake flash */
+
+        partitions {
+            compatible = "fixed-partitions";
+            #address-cells = <1>;
+            #size-cells = <1>;
+
+            partition@0 {
+                label = "u-boot";
+                reg = <0x00000000 0x00040000>;
+            };
+
+            partition@40000 {
+                label = "kernel";
+                reg = <0x00040000 0x003c0000>;
+            };
+
+            partition@400000 {
+                label = "rootfs";
+                reg = <0x00400000 0x00400000>;
+            };
+        };
+    };
+};

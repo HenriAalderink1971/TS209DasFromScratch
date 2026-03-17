@@ -1,0 +1,12 @@
+qemu-system-arm
+qemu-utils
+cpio
+file
+expect
+initramfs-tools
+xxd
+libmpfr6
+libgmp10
+libmpc3
+libexpat1
+screen

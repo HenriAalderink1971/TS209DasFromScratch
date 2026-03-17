@@ -1,0 +1,28 @@
+# Build output
+workspace/build/
+workspace/sources/
+workspace/sysroot/
+workspace/toolchain/
+workspace/artifacts/
+workspace/downloads/
+*.tar
+*.tar.gz
+*.tar.xz
+*.img
+*.bin
+*.iso
+*.ta
+*.kate-swp
+
+# Editor junk
+*.swp
+*.swo
+*.tmp
+
+# Test files
+test.o
+test
+uImage
+uInitrd
+payload.bin
+
