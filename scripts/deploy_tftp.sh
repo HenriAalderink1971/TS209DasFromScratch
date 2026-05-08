@@ -6,7 +6,8 @@ OWNER="tftp"
 GROUP="tftp"
 
 FILES="
-uImage
+ts209/uImage
+ts209/orion5x-qnap-ts209pro2.dtb
 uInitrd
 "
 

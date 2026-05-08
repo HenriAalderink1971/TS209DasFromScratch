@@ -12,6 +12,7 @@ KERNEL_DEFCONFIG := $(ROOT)/config/ts209pII_defconfig
 
 TS209_ARTIFACTS	 := $(ARTIFACTS)/ts209
 TS209_KMODULES	 := $(TS209_ARTIFACTS)/kmodules
+TS209_DTS        := $(ROOT)/config/dts/orion5x-qnap-ts209pro2.dts
 
 QEMU_DEFCONFIG	 := $(ROOT)/config/qemu_versatile_defconfig
 QEMU_ARTIFACTS	 := $(ARTIFACTS)/qemu
@@ -36,6 +37,14 @@ $(DOWNLOADS)/$(KERNEL_TARBALL): | $(DOWNLOADS)
 $(KERNEL_SRC): $(DOWNLOADS)/$(KERNEL_TARBALL) | $(SOURCES)
 	rm -rf $(KERNEL_SRC)
 	tar -xf $< -C $(SOURCES)
+	cp $(TS209_DTS) $(KERNEL_SRC)/arch/arm/boot/dts/
+	chmod +w $(KERNEL_SRC)/arch/arm/boot/dts/Makefile
+	patch -d $(KERNEL_SRC) -p1 < /workspace/config/patches/add-ts209-dtb.patch
+
+
+
+
+
 
 # ============================================================
 # headers (toolchain)
@@ -67,6 +76,8 @@ $(KERNEL_SRC)/arch/arm/configs/ts209pII_defconfig: $(KERNEL_DEFCONFIG) $(KERNEL_
 	mkdir -p $(KERNEL_SRC)/arch/arm/configs
 	cp $< $@
 
+
+
 .PHONY: kernel-build
 kernel-build: $(TS209_ARTIFACTS)/uImage
 
@@ -74,12 +85,14 @@ $(TS209_ARTIFACTS)/uImage: \
 	$(KERNEL_SRC)/arch/arm/configs/ts209pII_defconfig \
 	$(KERNEL_SRC) \
 	| $(TS209_ARTIFACTS) $(TS209_KMODULES)
+	cd $(KERNEL_SRC) && $(MAKE) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) -p ts209pII_defconfig
+	cd $(KERNEL_SRC) && $(MAKE) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) -p prepare
+	cd $(KERNEL_SRC) && $(MAKE) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) -p LOADADDR=0x00008000 -j$$(nproc) uImage
+	cd $(KERNEL_SRC) && $(MAKE) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) -p dtbs
 
-	cd $(KERNEL_SRC) && \
-		$(MAKE) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) ts209pII_defconfig && \
-		$(MAKE) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) prepare && \
-		$(MAKE) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) LOADADDR=0x00008000 -j$$(nproc) uImage
 	cp $(KERNEL_SRC)/arch/arm/boot/uImage $(TS209_ARTIFACTS)/uImage
+	cp $(KERNEL_SRC)/arch/arm/boot/dts/orion5x-qnap-ts209pro2.dtb $(TS209_ARTIFACTS)/
+
 
 # ============================================================
 # QEMU kernel (VersatilePB) + DTB
